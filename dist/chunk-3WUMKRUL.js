@@ -1,4 +1,4 @@
-// Built 2026-11-13T20:23:08.158Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -35,4 +35,4 @@ export {
   __export,
   __toESM
 };
-//# sourceMappingURL=chunk-SRFR5MGB.js.map
+//# sourceMappingURL=chunk-3WUMKRUL.js.map

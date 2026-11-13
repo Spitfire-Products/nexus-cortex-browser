@@ -1,4 +1,4 @@
-// Built 2026-11-13T20:23:08.158Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 
 // src/locate.ts
@@ -100,7 +100,8 @@ var EXTENSIONS = [
   { name: "ubol", label: "uBlock Origin Lite", url: "https://github.com/uBlockOrigin/uBOL-home/releases/download/2026.308.1810/uBOLite_2026.308.1810.chromium.zip" },
   { name: "consent-o-matic", label: "Consent-O-Matic", url: "https://github.com/cavi-au/Consent-O-Matic/releases/download/v1.1.5/consent-o-matic-v1.1.5-unpacked-release-chromium.zip" }
 ];
-var PIP = ["patchright", "websockify", "pymupdf", "pdfplumber", "beautifulsoup4"];
+var PIP_ALL = ["patchright", "websockify", "pymupdf", "pdfplumber", "beautifulsoup4"];
+var PIP = process.platform === "linux" ? PIP_ALL : PIP_ALL.filter((p) => p !== "patchright" && p !== "websockify");
 var PIP_IMPORT = { patchright: "patchright", websockify: "websockify", pymupdf: "fitz", pdfplumber: "pdfplumber", beautifulsoup4: "bs4" };
 var venvDir = () => path2.join(toolsHome(), "venv");
 var venvPy = () => path2.join(venvDir(), process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
@@ -117,7 +118,7 @@ function checkAll() {
   add("core", `Node ${process.versions.node}`, nodeMajor >= 20, "install Node 20 or newer");
   const chrome = findChromium();
   add("core", `Chrome/Chromium${chrome ? ` (${chrome})` : ""}`, !!chrome, "cortex browser install (downloads Chrome for Testing) or install Chrome / Chromium");
-  add("sandbox", "python3", !!which("python3"), "cortex browser install");
+  add(process.platform === "linux" ? "sandbox" : "pdf skills", "python3", !!which("python3"), "cortex browser install", process.platform !== "linux");
   for (const p of PIP) add(p === "patchright" || p === "websockify" ? "sandbox" : "pdf skills", `python: ${p}`, pyHas(PIP_IMPORT[p]), "cortex browser install", p !== "patchright" && p !== "websockify");
   if (linux) {
     add("sandbox", "Xvfb (virtual display on :99)", !!which("Xvfb"), "cortex browser install");
@@ -146,8 +147,8 @@ function installPlan(rows = checkAll()) {
   if (sys.length) steps.push(`Install system tools: ${sys.join(", ")} (package manager with root / passwordless sudo / sudo at this terminal, else Nix)`);
   if (sys.length) mb += 60;
   if (rows.some((r) => !r.ok && r.item.startsWith("python: "))) {
-    steps.push(`Create a private Python environment in ${venvDir()} with ${PIP.join(", ")}`);
-    mb += 250;
+    steps.push(`Create a private Python environment in ${venvDir()} with ${PIP.join(", ")}${process.platform === "linux" ? "" : " (for reading PDFs)"}`);
+    mb += process.platform === "linux" ? 250 : 60;
   }
   if (rows.some((r) => !r.ok && r.area === "extensions")) {
     steps.push("Download the uBlock Origin Lite and Consent-O-Matic extensions");
@@ -290,4 +291,4 @@ export {
   installPlan,
   installAll
 };
-//# sourceMappingURL=chunk-KIMKXZGG.js.map
+//# sourceMappingURL=chunk-MLM4U3D5.js.map

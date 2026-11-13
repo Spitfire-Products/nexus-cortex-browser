@@ -1,16 +1,16 @@
-// Built 2026-11-13T20:23:08.158Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   extraPath,
   findChromium
-} from "./chunk-KIMKXZGG.js";
+} from "./chunk-MLM4U3D5.js";
 import {
   McpServer
-} from "./chunk-OBNBNXPJ.js";
+} from "./chunk-LIOMVPKD.js";
 import {
   external_exports,
   registerDesktopTool
-} from "./chunk-QTRCRCXT.js";
+} from "./chunk-CMAQKRK5.js";
 
 // src/local.ts
 import fs4 from "node:fs";
@@ -14775,4 +14775,4 @@ function wrapBrowseForXServerHint(server) {
 export {
   createLocalBrowserMCP
 };
-//# sourceMappingURL=chunk-MPJ2HHRP.js.map
+//# sourceMappingURL=chunk-7UZCSDDT.js.map
