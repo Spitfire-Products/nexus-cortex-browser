@@ -24,6 +24,18 @@ cortex browser install          # installs this package and everything it needs,
 cortex update --browser
 ```
 
+What gets installed: on macOS and Windows, only the two browser extensions (Chrome is the one you already have; Chrome for Testing is
+downloaded only if there's none). Two optional parts:
+
+```bash
+cortex browser install --pdf        # PDF reading (Python: pymupdf, pdfplumber, beautifulsoup4)
+cortex browser install --sandbox    # Linux only: real Chrome on a virtual display, for challenge pages, incognito and live view
+```
+
+Linux turns both on by default; `--no-pdf` / `--no-sandbox` leave them out. Your choice is remembered, so `cortex update` keeps it.
+Nothing is downloaded twice: Python packages your `python3` already has are used as they are, and a small environment in
+`~/.nexus-cortex/browser/venv` holds only what is missing.
+
 After that, a plain `cortex update` keeps it up to date along with nexus-cortex. Check it any time:
 
 ```bash

@@ -1,4 +1,4 @@
-// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 
 // src/locate.ts
@@ -72,6 +72,7 @@ import os2 from "node:os";
 import path2 from "node:path";
 var toolsHome = () => process.env.NEXUS_BROWSER_HOME ?? path2.join(os2.homedir(), ".nexus-cortex", "browser");
 var statePath = () => path2.join(toolsHome(), "install.json");
+var defaultExtras = () => ({ pdf: process.platform === "linux", sandbox: process.platform === "linux" });
 function readInstallState() {
   try {
     return JSON.parse(fs2.readFileSync(statePath(), "utf8"));
@@ -101,6 +102,9 @@ var EXTENSIONS = [
   { name: "consent-o-matic", label: "Consent-O-Matic", url: "https://github.com/cavi-au/Consent-O-Matic/releases/download/v1.1.5/consent-o-matic-v1.1.5-unpacked-release-chromium.zip" }
 ];
 var PIP_ALL = ["patchright", "websockify", "pymupdf", "pdfplumber", "beautifulsoup4"];
+var SANDBOX_PIP = ["patchright", "websockify"];
+var PDF_PIP = ["pymupdf", "pdfplumber", "beautifulsoup4"];
+var PIP_SPEC = { pymupdf: "pymupdf<2" };
 var PIP = process.platform === "linux" ? PIP_ALL : PIP_ALL.filter((p) => p !== "patchright" && p !== "websockify");
 var PIP_IMPORT = { patchright: "patchright", websockify: "websockify", pymupdf: "fitz", pdfplumber: "pdfplumber", beautifulsoup4: "bs4" };
 var venvDir = () => path2.join(toolsHome(), "venv");
@@ -111,6 +115,13 @@ var pyHas = (mod) => {
   const py = python3();
   return !!py && spawnSync(py, ["-c", `import ${mod}`], { stdio: "ignore" }).status === 0;
 };
+function resolveExtras(e) {
+  const base = { ...defaultExtras(), ...readInstallState()?.extras ?? {} };
+  const r = { pdf: e?.pdf ?? base.pdf, sandbox: e?.sandbox ?? base.sandbox };
+  if (process.platform !== "linux") r.sandbox = false;
+  return r;
+}
+var wantedPip = (x) => [...x.sandbox ? SANDBOX_PIP : [], ...x.pdf ? PDF_PIP : []];
 function checkAll() {
   const rows = [];
   const add = (area, item, ok, fix, optional = false) => rows.push({ area, item, ok, fix, optional });
@@ -135,20 +146,22 @@ var readiness = (rows = checkAll()) => ({
   core: rows.filter((r) => r.area === "core").every((r) => r.ok),
   sandbox: rows.filter((r) => r.area === "sandbox" && !r.optional).every((r) => r.ok)
 });
-function installPlan(rows = checkAll()) {
+function installPlan(rows = checkAll(), extras) {
   const steps = [];
   let mb = 0;
+  const x = resolveExtras(extras);
   const missing = (item) => rows.some((r) => !r.ok && item.test(r.item));
   if (missing(/^Chrome/)) {
     steps.push("Download Chrome for Testing into " + path2.join(toolsHome(), "chrome"));
     mb += 350;
   }
-  const sys = systemNeeds();
+  const sys = systemNeeds(x);
   if (sys.length) steps.push(`Install system tools: ${sys.join(", ")} (package manager with root / passwordless sudo / sudo at this terminal, else Nix)`);
   if (sys.length) mb += 60;
-  if (rows.some((r) => !r.ok && r.item.startsWith("python: "))) {
-    steps.push(`Create a private Python environment in ${venvDir()} with ${PIP.join(", ")}${process.platform === "linux" ? "" : " (for reading PDFs)"}`);
-    mb += process.platform === "linux" ? 250 : 60;
+  const pyMissing = wantedPip(x).filter((p) => !pyHas(PIP_IMPORT[p]));
+  if (pyMissing.length) {
+    steps.push(`Add Python packages ${pyMissing.join(", ")} in ${venvDir()} (it uses the packages your python3 already has; only what is missing is downloaded)`);
+    mb += (pyMissing.includes("patchright") ? 190 : 0) + (pyMissing.some((p) => PDF_PIP.includes(p)) ? 60 : 0);
   }
   if (rows.some((r) => !r.ok && r.area === "extensions")) {
     steps.push("Download the uBlock Origin Lite and Consent-O-Matic extensions");
@@ -156,13 +169,15 @@ function installPlan(rows = checkAll()) {
   }
   return { steps, approxMB: mb };
 }
-function systemNeeds() {
+function systemNeeds(x = resolveExtras()) {
   if (!linux) return [];
   const need = [];
-  if (!which("python3")) need.push("python3");
-  if (!which("Xvfb")) need.push("Xvfb");
-  if (!which("xdotool")) need.push("xdotool");
-  if (!which("x11vnc")) need.push("x11vnc");
+  if (wantedPip(x).length && !which("python3")) need.push("python3");
+  if (x.sandbox) {
+    if (!which("Xvfb")) need.push("Xvfb");
+    if (!which("xdotool")) need.push("xdotool");
+    if (!which("x11vnc")) need.push("x11vnc");
+  }
   return need;
 }
 var PM = {
@@ -182,6 +197,8 @@ async function installAll(opts) {
   const manual = [];
   const prev = readInstallState();
   const state = { version: 1, at: (/* @__PURE__ */ new Date()).toISOString(), ...prev?.chrome ? { chrome: prev.chrome } : {}, ...prev?.extraPath ? { extraPath: prev.extraPath } : {}, ready: { core: false, sandbox: false } };
+  const x = resolveExtras(opts.extras);
+  state.extras = x;
   fs2.mkdirSync(toolsHome(), { recursive: true });
   if (!findChromium() && !(state.chrome && fs2.existsSync(state.chrome))) {
     log("Downloading Chrome for Testing (stable)\u2026");
@@ -198,7 +215,7 @@ async function installAll(opts) {
       manual.push(`Chrome: ${String(e.message).slice(0, 160)} \u2014 install Google Chrome or Chromium`);
     }
   }
-  const need = systemNeeds();
+  const need = systemNeeds(x);
   if (need.length) {
     const root = typeof process.getuid === "function" && process.getuid() === 0;
     const hasSudo = !!which("sudo");
@@ -234,7 +251,7 @@ async function installAll(opts) {
       installed = dirs.length === need.length;
     }
     if (!installed) {
-      const still = systemNeeds();
+      const still = systemNeeds(x);
       if (still.length) {
         const cmd = pm ? `sudo ${pm.cmd(still.flatMap((t) => pm.pkgs[t])).map((c) => c.join(" ")).join(" && sudo ")}` : `install ${still.join(", ")} with your package manager`;
         manual.push(`system tools ${still.join(", ")}: ${cmd}`);
@@ -242,17 +259,20 @@ async function installAll(opts) {
     }
   }
   const py = which("python3");
-  if (py) {
+  const want = wantedPip(x);
+  if (py && want.length && want.some((p) => !pyHas(PIP_IMPORT[p]))) {
     if (!fs2.existsSync(venvPy())) {
-      log(`Creating the private Python environment ${venvDir()}\u2026`);
-      if (spawnSync(py, ["-m", "venv", venvDir()], { stdio: opts.interactive ? "inherit" : "ignore" }).status !== 0) manual.push("python venv: install python3-venv (Debian/Ubuntu) and re-run");
+      log(`Creating the Python environment ${venvDir()} (it also sees your python3's packages)\u2026`);
+      const ok = spawnSync(py, ["-m", "venv", "--system-site-packages", venvDir()], { stdio: opts.interactive ? "inherit" : "ignore" }).status === 0;
+      if (!ok) manual.push("python venv: install python3-venv (Debian/Ubuntu) and re-run");
     }
-    const missing = PIP.filter((p) => !pyHas(PIP_IMPORT[p]));
+    const missing = want.filter((p) => !pyHas(PIP_IMPORT[p]));
     if (missing.length && fs2.existsSync(venvPy())) {
       log(`Installing Python packages: ${missing.join(" ")}\u2026`);
-      const r = spawnSync(venvPy(), ["-m", "pip", "install", "-q", ...missing], { stdio: opts.interactive ? "inherit" : ["ignore", "ignore", "pipe"], env: { ...process.env, PIP_CONFIG_FILE: os2.devnull, PIP_USER: "0" } });
+      const env = { ...process.env, PIP_CONFIG_FILE: os2.devnull, PIP_USER: "0" };
+      const r = spawnSync(venvPy(), ["-m", "pip", "install", "-q", ...missing.map((p) => PIP_SPEC[p] ?? p)], { stdio: opts.interactive ? "inherit" : ["ignore", "ignore", "pipe"], env });
       if (r.status === 0) done.push(`python: ${missing.join(", ")}`);
-      else manual.push(`python packages ${missing.join(", ")}: pip install failed`);
+      else manual.push(`python packages ${missing.join(", ")}: install failed`);
     }
   }
   const extDir = path2.join(toolsHome(), "extensions");
@@ -262,9 +282,13 @@ async function installAll(opts) {
     const zip = path2.join(os2.tmpdir(), `nexus-browser-${e.name}-${process.pid}.zip`);
     try {
       execFileSync("curl", ["-fsSL", "-o", zip, e.url], { stdio: "ignore" });
-      const pyx = python3();
-      if (!pyx) throw new Error("python3 is needed to unpack it");
-      execFileSync(pyx, ["-c", `import zipfile; zipfile.ZipFile(${JSON.stringify(zip)}).extractall(${JSON.stringify(path2.join(extDir, e.name))})`]);
+      const unzip = which("unzip");
+      if (unzip) execFileSync(unzip, ["-q", "-o", zip, "-d", path2.join(extDir, e.name)], { stdio: "ignore" });
+      else {
+        const pyx = python3();
+        if (!pyx) throw new Error("unzip or python3 is needed to unpack it");
+        execFileSync(pyx, ["-c", `import zipfile; zipfile.ZipFile(${JSON.stringify(zip)}).extractall(${JSON.stringify(path2.join(extDir, e.name))})`]);
+      }
       done.push(e.label);
     } catch (err) {
       manual.push(`${e.label}: ${String(err.message).slice(0, 120)}`);
@@ -291,4 +315,4 @@ export {
   installPlan,
   installAll
 };
-//# sourceMappingURL=chunk-MLM4U3D5.js.map
+//# sourceMappingURL=chunk-AISJD6KQ.js.map

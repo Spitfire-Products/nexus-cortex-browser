@@ -1,11 +1,11 @@
-// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   checkAll,
   installAll,
   readiness
-} from "./chunk-MLM4U3D5.js";
-import "./chunk-3WUMKRUL.js";
+} from "./chunk-AISJD6KQ.js";
+import "./chunk-XUUJPDJW.js";
 
 // src/doctor.ts
 var install = process.argv.includes("--install");

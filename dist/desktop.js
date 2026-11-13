@@ -1,8 +1,8 @@
-// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   createDesktopMCP
-} from "./chunk-LIOMVPKD.js";
+} from "./chunk-PZPVUFQP.js";
 import {
   AX_INTERACTIVE,
   GUEST_INTERACTIVE_CLASS,
@@ -24,9 +24,9 @@ import {
   registerDesktopTool,
   x11Backend,
   xdoKey
-} from "./chunk-CMAQKRK5.js";
-import "./chunk-YCSWWXNF.js";
-import "./chunk-3WUMKRUL.js";
+} from "./chunk-CQ4MI7J7.js";
+import "./chunk-RWUTELIP.js";
+import "./chunk-XUUJPDJW.js";
 export {
   AX_INTERACTIVE,
   GUEST_INTERACTIVE_CLASS,

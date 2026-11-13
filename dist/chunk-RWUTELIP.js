@@ -1,4 +1,4 @@
-// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 
 // ../desktop/src/desktop-script.ts
@@ -428,4 +428,4 @@ export {
   validateScript,
   formatValidateReport
 };
-//# sourceMappingURL=chunk-YCSWWXNF.js.map
+//# sourceMappingURL=chunk-RWUTELIP.js.map

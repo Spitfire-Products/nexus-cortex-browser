@@ -1,11 +1,11 @@
-// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   createDesktop,
   desktopMode
-} from "./chunk-CMAQKRK5.js";
-import "./chunk-YCSWWXNF.js";
-import "./chunk-3WUMKRUL.js";
+} from "./chunk-CQ4MI7J7.js";
+import "./chunk-RWUTELIP.js";
+import "./chunk-XUUJPDJW.js";
 
 // ../desktop/src/desktop-bus-daemon.ts
 import fs from "node:fs";

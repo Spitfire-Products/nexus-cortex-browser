@@ -1,8 +1,8 @@
-// Built 2026-11-13T20:58:13.908Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   createLocalBrowserMCP
-} from "./chunk-7UZCSDDT.js";
+} from "./chunk-GFHVTS5L.js";
 import {
   checkAll,
   findChromium,
@@ -11,11 +11,11 @@ import {
   readInstallState,
   readiness,
   toolsHome
-} from "./chunk-MLM4U3D5.js";
-import "./chunk-LIOMVPKD.js";
-import "./chunk-CMAQKRK5.js";
-import "./chunk-YCSWWXNF.js";
-import "./chunk-3WUMKRUL.js";
+} from "./chunk-AISJD6KQ.js";
+import "./chunk-PZPVUFQP.js";
+import "./chunk-CQ4MI7J7.js";
+import "./chunk-RWUTELIP.js";
+import "./chunk-XUUJPDJW.js";
 export {
   checkAll,
   createLocalBrowserMCP,
