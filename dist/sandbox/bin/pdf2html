@@ -1,0 +1,208 @@
+#!/usr/bin/env python3
+"""pdf2html — Extract structured HTML + manifest from a PDF.
+
+Usage:
+  pdf2html input.pdf                     # structured HTML (agent consumption)
+  pdf2html input.pdf --manifest          # JSON manifest only (outline, tables, images)
+  pdf2html input.pdf --images /out/dir   # also extract images as PNG files
+  pdf2html input.pdf --lossless          # delegates to pdf2htmlEX (pixel-perfect)
+  pdf2html input.pdf --text              # plain text only (cheapest)
+  pdf2html input.pdf --pages 1-5         # specific page range
+"""
+
+import sys
+import os
+import json
+import argparse
+
+
+def extract_structured(pdf_path, pages=None, extract_images_dir=None):
+    """PyMuPDF structured extraction — HTML + manifest."""
+    import fitz
+    doc = fitz.open(pdf_path)
+
+    page_range = range(len(doc))
+    if pages:
+        start, end = pages
+        page_range = range(max(0, start - 1), min(len(doc), end))
+
+    html_parts = []
+    manifest = {
+        "source": os.path.basename(pdf_path),
+        "pages": len(doc),
+        "extracted_pages": list(page_range),
+        "images": [],
+        "tables": [],
+        "headings": [],
+    }
+
+    for i in page_range:
+        page = doc[i]
+        page_num = i + 1
+
+        html_parts.append(f'<div class="page" data-page="{page_num}">')
+        html_parts.append(page.get_text('html'))
+        html_parts.append('</div>')
+
+        images = page.get_images(full=True)
+        for img_idx, img_info in enumerate(images):
+            img_id = f"img-p{page_num}-{img_idx}"
+            manifest["images"].append({
+                "id": img_id,
+                "page": page_num,
+                "xref": img_info[0],
+                "width": img_info[2],
+                "height": img_info[3],
+            })
+
+            if extract_images_dir:
+                xref = img_info[0]
+                pix = fitz.Pixmap(doc, xref)
+                if pix.n >= 5:  # CMYK
+                    pix = fitz.Pixmap(fitz.csRGB, pix)
+                out_path = os.path.join(extract_images_dir, f"{img_id}.png")
+                pix.save(out_path)
+                manifest["images"][-1]["file"] = out_path
+
+        blocks = page.get_text("dict")["blocks"]
+        for block in blocks:
+            if "lines" not in block:
+                continue
+            for line in block["lines"]:
+                for span in line["spans"]:
+                    size = span["size"]
+                    text = span["text"].strip()
+                    if text and size >= 14:
+                        level = 1 if size >= 22 else 2 if size >= 16 else 3
+                        manifest["headings"].append({
+                            "level": level,
+                            "text": text,
+                            "page": page_num,
+                            "font_size": round(size, 1),
+                        })
+
+        try:
+            tables = page.find_tables()
+            for t_idx, table in enumerate(tables):
+                t_id = f"table-p{page_num}-{t_idx}"
+                extracted = table.extract()
+                headers = extracted[0] if extracted else []
+                manifest["tables"].append({
+                    "id": t_id,
+                    "page": page_num,
+                    "headers": [h for h in headers if h],
+                    "rows": len(extracted),
+                    "cols": len(headers),
+                })
+        except Exception:
+            pass
+
+    full_html = f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>{manifest['source']}</title>
+<style>
+  .page {{ border-bottom: 2px solid #ccc; padding: 20px 0; margin-bottom: 20px; }}
+  .page::before {{ content: "Page " attr(data-page); font-size: 10pt; color: #888;
+                   display: block; margin-bottom: 10px; }}
+  img {{ max-width: 100%; height: auto; }}
+  table {{ border-collapse: collapse; margin: 10px 0; }}
+  td, th {{ border: 1px solid #ddd; padding: 4px 8px; }}
+</style>
+</head><body>{''.join(html_parts)}</body></html>"""
+
+    return full_html, manifest
+
+
+def extract_text_only(pdf_path, pages=None):
+    """Cheapest extraction — plain text."""
+    import fitz
+    doc = fitz.open(pdf_path)
+    page_range = range(len(doc))
+    if pages:
+        start, end = pages
+        page_range = range(max(0, start - 1), min(len(doc), end))
+
+    parts = []
+    for i in page_range:
+        parts.append(f"\n--- PAGE {i+1} ---\n")
+        parts.append(doc[i].get_text("text"))
+    return ''.join(parts)
+
+
+def run_pdf2htmlex(pdf_path):
+    """Delegate to pdf2htmlEX for pixel-perfect conversion."""
+    import subprocess
+    import shutil
+
+    if not shutil.which("pdf2htmlEX"):
+        print("pdf2htmlEX is not installed. Use default mode (PyMuPDF) instead.", file=sys.stderr)
+        sys.exit(1)
+
+    out_dir = "/tmp/pdf2htmlex_out"
+    os.makedirs(out_dir, exist_ok=True)
+    basename = os.path.splitext(os.path.basename(pdf_path))[0]
+    result = subprocess.run(
+        ["pdf2htmlEX", "--zoom", "1.5", "--process-outline", "1",
+         "--dest-dir", out_dir, pdf_path],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print(f"pdf2htmlEX error: {result.stderr}", file=sys.stderr)
+        sys.exit(1)
+
+    out_file = os.path.join(out_dir, f"{basename}.html")
+    if os.path.exists(out_file):
+        with open(out_file) as f:
+            print(f.read())
+    else:
+        print(f"Output not found at {out_file}", file=sys.stderr)
+        sys.exit(1)
+
+
+def parse_pages(pages_str):
+    """Parse '1-5' or '3' into (start, end) tuple."""
+    if '-' in pages_str:
+        parts = pages_str.split('-')
+        return (int(parts[0]), int(parts[1]))
+    else:
+        n = int(pages_str)
+        return (n, n)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Extract structured HTML from PDF")
+    parser.add_argument("pdf", help="Path to PDF file")
+    parser.add_argument("--manifest", action="store_true", help="Output JSON manifest only")
+    parser.add_argument("--images", metavar="DIR", help="Extract images to directory")
+    parser.add_argument("--lossless", action="store_true", help="Use pdf2htmlEX (pixel-perfect)")
+    parser.add_argument("--text", action="store_true", help="Plain text only (cheapest)")
+    parser.add_argument("--pages", metavar="RANGE", help="Page range, e.g. 1-5 or 3")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.pdf):
+        print(f"File not found: {args.pdf}", file=sys.stderr)
+        sys.exit(1)
+
+    pages = parse_pages(args.pages) if args.pages else None
+
+    if args.lossless:
+        run_pdf2htmlex(args.pdf)
+        return
+
+    if args.text:
+        print(extract_text_only(args.pdf, pages))
+        return
+
+    if args.images:
+        os.makedirs(args.images, exist_ok=True)
+
+    html, manifest = extract_structured(args.pdf, pages, args.images)
+
+    if args.manifest:
+        print(json.dumps(manifest, indent=2))
+    else:
+        print(f"<!-- MANIFEST\n{json.dumps(manifest, indent=2)}\n-->")
+        print(html)
+
+
+if __name__ == "__main__":
+    main()

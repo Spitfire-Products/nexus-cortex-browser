@@ -1,0 +1,50 @@
+{
+  "name": "@nexus-cortex/browser",
+  "version": "0.8.4",
+  "description": "Native local browser for nexus-cortex: the hosted nexus-browser MCP (its own Worker code, bundled) on a local headless Chromium \u2014 no hosted service, no container.",
+  "license": "(AGPL-3.0-only OR LicenseRef-Spitfire-Commercial)",
+  "author": "Spitfire Products",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "nexus-browser-local": "./dist/server.js",
+    "nexus-browser-doctor": "./dist/doctor.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "LICENSE-COMMERCIAL.md",
+    "NOTICE",
+    "third_party",
+    "README.md",
+    "guest"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && node build.mjs",
+    "clean": "rm -rf dist",
+    "test": "node test/smoke.mjs",
+    "start": "node dist/server.js",
+    "doctor": "node dist/doctor.js"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "dependencies": {
+    "puppeteer-core": "22.15.0"
+  },
+  "devDependencies": {
+    "esbuild": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spitfire-Products/nexus-cortex-browser.git"
+  },
+  "homepage": "https://github.com/Spitfire-Products/nexus-cortex-browser#readme",
+  "bugs": {
+    "url": "https://github.com/Spitfire-Products/nexus-cortex-browser/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
