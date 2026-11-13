@@ -1,4 +1,4 @@
-// Built 2026-11-13T20:03:53.952Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T20:23:08.158Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   $ZodObject,
@@ -32,11 +32,11 @@ import {
   toJSONSchema,
   union,
   unknown
-} from "./chunk-7TPOXOXJ.js";
+} from "./chunk-QTRCRCXT.js";
 import {
   __commonJS,
   __toESM
-} from "./chunk-XWU5QYVE.js";
+} from "./chunk-SRFR5MGB.js";
 
 // ../../../nexus-terminal/workers/nexus-browser/node_modules/ajv/dist/compile/codegen/code.js
 var require_code = __commonJS({
@@ -16270,7 +16270,7 @@ var EMPTY_COMPLETION_RESULT = {
 // ../desktop/src/mcp.ts
 async function createDesktopMCP(opts = {}) {
   const home = opts.home ?? process.env.NEXUS_BROWSER_HOME ?? path.join(os.homedir(), ".nexus-cortex", "browser");
-  const server = new McpServer({ name: "nexus-desktop", version: "0.10.2" });
+  const server = new McpServer({ name: "nexus-desktop", version: "0.10.3" });
   const desktop = registerDesktopTool(server, home);
   if (!desktop) throw new Error("nexus-desktop: NEXUS_DESKTOP is not set to virtual|real \u2014 run `cortex desktop enable`");
   return { server, desktop, async close() {
@@ -16286,4 +16286,4 @@ export {
   McpServer,
   createDesktopMCP
 };
-//# sourceMappingURL=chunk-L7OT7JQ5.js.map
+//# sourceMappingURL=chunk-OBNBNXPJ.js.map

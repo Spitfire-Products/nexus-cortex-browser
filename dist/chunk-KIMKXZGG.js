@@ -1,4 +1,4 @@
-// Built 2026-11-13T20:03:53.952Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-13T20:23:08.158Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 
 // src/locate.ts
@@ -290,4 +290,4 @@ export {
   installPlan,
   installAll
 };
-//# sourceMappingURL=chunk-UJ3RPCR6.js.map
+//# sourceMappingURL=chunk-KIMKXZGG.js.map
