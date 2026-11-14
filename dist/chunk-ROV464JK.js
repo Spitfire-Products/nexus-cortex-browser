@@ -1,4 +1,5 @@
-// Built 2026-11-14T02:29:58.011Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+#!/usr/bin/env node
+// Built 2026-11-14T04:42:47.859Z from the hosted nexus-browser tool code — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   MACRO_NAME,
@@ -12,10 +13,10 @@ import {
   parseMenuList,
   substitute,
   validateScript
-} from "./chunk-ZMKWOMZH.js";
+} from "./chunk-2UXTN3C4.js";
 import {
   __export
-} from "./chunk-ZKJXZKW3.js";
+} from "./chunk-PGSKU3UY.js";
 
 // ../desktop/src/desktop.ts
 import { execFile, spawn } from "node:child_process";
@@ -13792,7 +13793,7 @@ function date4(params) {
 config(en_default());
 
 // ../desktop/src/desktop.ts
-var VERSION = "0.10.3";
+var VERSION = "0.10.5";
 function mergeLight(prev, light) {
   if (!light.partial || !prev) return light;
   const others = prev.windows.filter((w) => w.app !== light.app);
@@ -16146,4 +16147,4 @@ export {
   createDesktop,
   registerDesktopTool
 };
-//# sourceMappingURL=chunk-BU7NT7LY.js.map
+//# sourceMappingURL=chunk-ROV464JK.js.map
