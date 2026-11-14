@@ -1,4 +1,4 @@
-// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-14T02:29:58.011Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   $ZodObject,
@@ -32,11 +32,11 @@ import {
   toJSONSchema,
   union,
   unknown
-} from "./chunk-CQ4MI7J7.js";
+} from "./chunk-BU7NT7LY.js";
 import {
   __commonJS,
   __toESM
-} from "./chunk-XUUJPDJW.js";
+} from "./chunk-ZKJXZKW3.js";
 
 // ../../../nexus-terminal/workers/nexus-browser/node_modules/ajv/dist/compile/codegen/code.js
 var require_code = __commonJS({
@@ -16286,4 +16286,4 @@ export {
   McpServer,
   createDesktopMCP
 };
-//# sourceMappingURL=chunk-PZPVUFQP.js.map
+//# sourceMappingURL=chunk-YVLLAITD.js.map

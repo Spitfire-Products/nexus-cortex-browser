@@ -1,4 +1,4 @@
-// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-14T02:29:58.011Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 
 // src/locate.ts
@@ -144,7 +144,9 @@ function checkAll() {
 }
 var readiness = (rows = checkAll()) => ({
   core: rows.filter((r) => r.area === "core").every((r) => r.ok),
-  sandbox: rows.filter((r) => r.area === "sandbox" && !r.optional).every((r) => r.ok)
+  // 0.8.7 (macbook 11-13): off Linux there are no REQUIRED sandbox rows, so `every` was vacuously true and macOS reported
+  // "sandbox backend: READY" under the "Linux-only" row. The sandbox backend exists only on Linux.
+  sandbox: process.platform === "linux" && rows.filter((r) => r.area === "sandbox" && !r.optional).every((r) => r.ok)
 });
 function installPlan(rows = checkAll(), extras) {
   const steps = [];
@@ -315,4 +317,4 @@ export {
   installPlan,
   installAll
 };
-//# sourceMappingURL=chunk-AISJD6KQ.js.map
+//# sourceMappingURL=chunk-SF6E3HBU.js.map

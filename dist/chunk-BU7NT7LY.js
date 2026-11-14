@@ -1,4 +1,4 @@
-// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-14T02:29:58.011Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   MACRO_NAME,
@@ -12,10 +12,10 @@ import {
   parseMenuList,
   substitute,
   validateScript
-} from "./chunk-RWUTELIP.js";
+} from "./chunk-ZMKWOMZH.js";
 import {
   __export
-} from "./chunk-XUUJPDJW.js";
+} from "./chunk-ZKJXZKW3.js";
 
 // ../desktop/src/desktop.ts
 import { execFile, spawn } from "node:child_process";
@@ -16146,4 +16146,4 @@ export {
   createDesktop,
   registerDesktopTool
 };
-//# sourceMappingURL=chunk-CQ4MI7J7.js.map
+//# sourceMappingURL=chunk-BU7NT7LY.js.map

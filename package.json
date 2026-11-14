@@ -1,6 +1,6 @@
 {
   "name": "@nexus-cortex/browser",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Native local browser for nexus-cortex: the hosted nexus-browser MCP (its own Worker code, bundled) on a local headless Chromium \u2014 no hosted service, no container.",
   "license": "(AGPL-3.0-only OR LicenseRef-Spitfire-Commercial)",
   "author": "Spitfire Products",

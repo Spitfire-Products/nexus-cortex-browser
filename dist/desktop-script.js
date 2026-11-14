@@ -1,4 +1,4 @@
-// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-14T02:29:58.011Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   HOTKEYS,
@@ -15,8 +15,8 @@ import {
   substitute,
   unquote,
   validateScript
-} from "./chunk-RWUTELIP.js";
-import "./chunk-XUUJPDJW.js";
+} from "./chunk-ZMKWOMZH.js";
+import "./chunk-ZKJXZKW3.js";
 export {
   HOTKEYS,
   MACRO_NAME,

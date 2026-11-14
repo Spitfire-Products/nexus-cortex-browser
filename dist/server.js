@@ -1,15 +1,15 @@
-// Built 2026-11-13T21:08:52.247Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
+// Built 2026-11-14T02:29:58.011Z from nexus-terminal/workers/nexus-browser/src/mcp.ts — do not edit; rebuild.
 import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);
 import {
   createLocalBrowserMCP
-} from "./chunk-GFHVTS5L.js";
-import "./chunk-AISJD6KQ.js";
+} from "./chunk-AZU3YK5W.js";
+import "./chunk-SF6E3HBU.js";
 import {
   JSONRPCMessageSchema
-} from "./chunk-PZPVUFQP.js";
-import "./chunk-CQ4MI7J7.js";
-import "./chunk-RWUTELIP.js";
-import "./chunk-XUUJPDJW.js";
+} from "./chunk-YVLLAITD.js";
+import "./chunk-BU7NT7LY.js";
+import "./chunk-ZMKWOMZH.js";
+import "./chunk-ZKJXZKW3.js";
 
 // src/stdio-guard.ts
 for (const k of ["log", "info", "debug", "warn"]) console[k] = (...a) => console.error(...a);
